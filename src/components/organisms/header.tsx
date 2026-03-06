@@ -9,20 +9,23 @@ const links = [
 
 export function AppHeader() {
   return (
-    <header className="border-b border-white/10 bg-[#04152b]/80 backdrop-blur">
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <p className="text-sm font-semibold tracking-wide text-[#ff9a5b]">
-          ITAU CORRETORA
-        </p>
-        <nav className="flex items-center gap-2">
+    <header className="border-b border-faint/40 bg-surface-0/80 backdrop-blur-xl">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-5 lg:px-8">
+        <div className="flex items-center gap-3">
+          <div className="h-6 w-[2px] bg-gold-400" />
+          <p className="font-display text-sm font-bold tracking-[0.15em] text-gold-400 uppercase">
+            Itau Corretora
+          </p>
+        </div>
+        <nav className="flex items-center gap-1">
           {links.map((item) => (
             <Link
               key={item.to}
               to={item.to}
-              className="rounded-md px-3 py-2 text-sm text-[#d9e8ff] transition hover:bg-[#ff6200]/15 hover:text-white"
+              className="rounded-sm px-3 py-1.5 font-mono text-xs tracking-wide text-muted transition-all duration-200 hover:text-cream"
               activeProps={{
                 className:
-                  "rounded-md bg-[#ff6200]/20 px-3 py-2 text-sm text-[#ffd5bd]",
+                  "rounded-sm border border-gold-400/20 bg-gold-400/[0.06] px-3 py-1.5 font-mono text-xs tracking-wide text-gold-200",
               }}
             >
               {item.label}
@@ -30,6 +33,7 @@ export function AppHeader() {
           ))}
         </nav>
       </div>
+      <div className="gold-line" />
     </header>
   );
 }

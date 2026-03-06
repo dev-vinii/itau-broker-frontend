@@ -20,26 +20,40 @@ export function MotorCompraPage() {
       title="Motor de Compra"
       description="Executa manualmente a compra programada para uma data de referencia."
     >
-      <section className="rounded-xl border border-white/10 bg-[#0a2342]/60 p-6">
+      <section className="animate-fade-up rounded-lg border border-faint/30 bg-surface-1/60 p-6">
+        <div className="mb-5 flex items-center gap-3">
+          <span className="rounded-sm bg-gold-400/10 px-2 py-0.5 font-mono text-[10px] tracking-wider text-gold-400 uppercase">
+            POST
+          </span>
+          <h2 className="font-display text-base font-bold text-cream">
+            Executar compra manual
+          </h2>
+        </div>
+
         <form
-          className="grid gap-4 sm:grid-cols-[1fr_auto]"
+          className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
           onSubmit={handleSubmit}
         >
-          <Input
-            value={dataReferencia}
-            onChange={(event) => setDataReferencia(event.target.value)}
-            placeholder="AAAA-MM-DD"
-            aria-label="Data de referencia"
-          />
+          <div>
+            <label className="mb-1 block font-mono text-[10px] tracking-wider text-muted uppercase">
+              Data de Referencia
+            </label>
+            <Input
+              value={dataReferencia}
+              onChange={(event) => setDataReferencia(event.target.value)}
+              placeholder="AAAA-MM-DD"
+              aria-label="Data de referencia"
+            />
+          </div>
           <Button type="submit" disabled={executePurchaseMutation.isPending}>
             {executePurchaseMutation.isPending
               ? "Executando..."
-              : "Executar compra manual"}
+              : "Executar"}
           </Button>
         </form>
 
         {executePurchaseMutation.isError && (
-          <p className="mt-4 text-sm text-red-300">
+          <p className="mt-4 font-mono text-xs text-danger">
             {getApiErrorMessage(executePurchaseMutation.error)}
           </p>
         )}

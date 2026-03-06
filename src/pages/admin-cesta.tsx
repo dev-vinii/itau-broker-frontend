@@ -7,6 +7,7 @@ import { useCreateBasketMutation } from "@/features/programmed-investment/hooks/
 import { useCurrentBasketQuery } from "@/features/programmed-investment/hooks/use-current-basket-query";
 import { useMasterCustodyQuery } from "@/features/programmed-investment/hooks/use-master-custody-query";
 import { getApiErrorMessage } from "@/features/programmed-investment/services/error";
+import { Loader2 } from "lucide-react";
 import { FormEvent, useState } from "react";
 
 const initialBasketItems = [
@@ -16,6 +17,10 @@ const initialBasketItems = [
   { ticker: "BBDC4", percentual: "15" },
   { ticker: "WEGE3", percentual: "10" },
 ];
+
+function LoadingSpinner() {
+  return <Loader2 className="h-3.5 w-3.5 animate-spin text-gold-400" />;
+}
 
 export function AdminCestaPage() {
   const [nome, setNome] = useState("Top Five - Fevereiro 2026");
@@ -50,46 +55,82 @@ export function AdminCestaPage() {
     );
   };
 
+  const totalPercent = itens.reduce(
+    (sum, item) => sum + Number(item.percentual || 0),
+    0,
+  );
+
   return (
     <FeaturePageShell
       title="Administracao da Cesta"
       description="Cadastro de cesta Top Five e consultas administrativas (cesta atual, historico e custodia master)."
     >
-      <section className="rounded-xl border border-white/10 bg-[#0a2342]/60 p-6">
-        <h2 className="mb-4 text-lg font-semibold">Cadastrar/alterar cesta</h2>
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <Input
-            value={nome}
-            onChange={(event) => setNome(event.target.value)}
-          />
+      <section className="animate-fade-up rounded-lg border border-faint/30 bg-surface-1/60 p-6">
+        <div className="mb-5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="rounded-sm bg-gold-400/10 px-2 py-0.5 font-mono text-[10px] tracking-wider text-gold-400 uppercase">
+              POST
+            </span>
+            <h2 className="font-display text-base font-bold text-cream">
+              Cadastrar/alterar cesta
+            </h2>
+          </div>
+          <span
+            className={`font-mono text-xs ${totalPercent === 100 ? "text-success" : "text-danger"}`}
+          >
+            {totalPercent}%
+          </span>
+        </div>
 
-          <div className="grid gap-3 md:grid-cols-2">
-            {itens.map((item, index) => (
-              <div
-                key={`${index}-${item.ticker}`}
-                className="grid gap-2 sm:grid-cols-2"
-              >
-                <Input
-                  value={item.ticker}
-                  onChange={(event) =>
-                    handleItemChange(
-                      index,
-                      "ticker",
-                      event.target.value.toUpperCase(),
-                    )
-                  }
-                  placeholder="Ticker"
-                />
-                <Input
-                  type="number"
-                  value={item.percentual}
-                  onChange={(event) =>
-                    handleItemChange(index, "percentual", event.target.value)
-                  }
-                  placeholder="Percentual"
-                />
-              </div>
-            ))}
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          <div>
+            <label className="mb-1 block font-mono text-[10px] tracking-wider text-muted uppercase">
+              Nome da Cesta
+            </label>
+            <Input
+              value={nome}
+              onChange={(event) => setNome(event.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <p className="font-mono text-[10px] tracking-wider text-muted uppercase">
+              Composicao
+            </p>
+            <div className="grid gap-2">
+              {itens.map((item, index) => (
+                <div
+                  key={`${index}-${item.ticker}`}
+                  className={`animate-fade-up stagger-${index + 1} grid grid-cols-[1fr_100px] items-center gap-2`}
+                >
+                  <Input
+                    value={item.ticker}
+                    onChange={(event) =>
+                      handleItemChange(
+                        index,
+                        "ticker",
+                        event.target.value.toUpperCase(),
+                      )
+                    }
+                    placeholder="Ticker"
+                  />
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      value={item.percentual}
+                      onChange={(event) =>
+                        handleItemChange(index, "percentual", event.target.value)
+                      }
+                      placeholder="%"
+                      className="pr-7"
+                    />
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 font-mono text-xs text-faint">
+                      %
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           <Button type="submit" disabled={createBasketMutation.isPending}>
@@ -98,13 +139,15 @@ export function AdminCestaPage() {
         </form>
 
         {createBasketMutation.isError && (
-          <p className="mt-3 text-sm text-red-300">
+          <p className="mt-3 font-mono text-xs text-danger">
             {getApiErrorMessage(createBasketMutation.error)}
           </p>
         )}
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-2">
+      <div className="gold-line" />
+
+      <section className="grid gap-5 lg:grid-cols-2">
         <JsonBlock
           title="Resposta de criacao da cesta"
           data={createBasketMutation.data}
@@ -113,31 +156,19 @@ export function AdminCestaPage() {
         <JsonBlock
           title="Cesta atual"
           data={currentBasketQuery.data}
-          extra={
-            currentBasketQuery.isFetching ? (
-              <span className="text-xs text-[#c1d3ed]">Carregando...</span>
-            ) : null
-          }
+          extra={currentBasketQuery.isFetching ? <LoadingSpinner /> : null}
         />
 
         <JsonBlock
           title="Historico de cestas"
           data={basketHistoryQuery.data}
-          extra={
-            basketHistoryQuery.isFetching ? (
-              <span className="text-xs text-[#c1d3ed]">Carregando...</span>
-            ) : null
-          }
+          extra={basketHistoryQuery.isFetching ? <LoadingSpinner /> : null}
         />
 
         <JsonBlock
           title="Custodia da conta master"
           data={masterCustodyQuery.data}
-          extra={
-            masterCustodyQuery.isFetching ? (
-              <span className="text-xs text-[#c1d3ed]">Carregando...</span>
-            ) : null
-          }
+          extra={masterCustodyQuery.isFetching ? <LoadingSpinner /> : null}
         />
       </section>
     </FeaturePageShell>

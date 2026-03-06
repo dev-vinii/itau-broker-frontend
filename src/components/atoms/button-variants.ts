@@ -1,22 +1,26 @@
 import { cva, type VariantProps } from "class-variance-authority";
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff6200]/70 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-sm font-mono text-xs tracking-wide uppercase transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold-400/60 disabled:pointer-events-none disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-[#ff6200] text-white hover:bg-[#e65a00]",
-        destructive: "bg-red-600 text-white hover:bg-red-500",
+        default:
+          "border border-gold-400 bg-gold-400/10 text-gold-200 hover:bg-gold-400/20 hover:text-gold-100",
+        destructive:
+          "border border-danger/40 bg-danger/10 text-danger hover:bg-danger/20",
         outline:
-          "border border-[#2d4f7c] bg-[#0a2342]/70 text-[#d9e8ff] hover:bg-[#123b6b]/70",
-        secondary: "bg-[#123b6b] text-[#d9e8ff] hover:bg-[#1b4d87]",
-        ghost: "text-[#d9e8ff] hover:bg-[#ff6200]/10 hover:text-white",
-        link: "text-[#ff8a3d] underline-offset-4 hover:underline",
+          "border border-faint/50 bg-surface-2/60 text-muted hover:border-gold-400/30 hover:text-cream",
+        secondary:
+          "border border-faint/30 bg-surface-2 text-cream hover:bg-surface-3",
+        ghost:
+          "text-muted hover:bg-surface-2 hover:text-cream",
+        link: "text-gold-400 underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
+        default: "h-10 px-5 py-2",
+        sm: "h-9 px-3",
+        lg: "h-11 px-8",
         icon: "h-10 w-10",
       },
     },
