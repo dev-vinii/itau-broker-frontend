@@ -5,6 +5,7 @@ import {
   parseIntegerAmountInput,
   parsePercentageInput,
 } from "./input-masks";
+import { describe, expect, it } from "vitest";
 
 describe("input-masks", () => {
   it("keeps only digits", () => {

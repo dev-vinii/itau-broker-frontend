@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import { CurrentBasketCard } from "./current-basket-card";
 import { FeaturePageShell } from "./feature-page-shell";
 import { JsonBlock } from "./json-block";

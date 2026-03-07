@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
 import { ReactNode } from "react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useBasketHistoryQuery } from "./use-basket-history-query";
 import { useCurrentBasketQuery } from "./use-current-basket-query";
 import { useMasterCustodyQuery } from "./use-master-custody-query";
@@ -38,9 +39,15 @@ describe("query hooks", () => {
     const queryClient = new QueryClient();
     const wrapper = createWrapper(queryClient);
 
-    const basketHistory = renderHook(() => useBasketHistoryQuery(), { wrapper });
-    const currentBasket = renderHook(() => useCurrentBasketQuery(), { wrapper });
-    const masterCustody = renderHook(() => useMasterCustodyQuery(), { wrapper });
+    const basketHistory = renderHook(() => useBasketHistoryQuery(), {
+      wrapper,
+    });
+    const currentBasket = renderHook(() => useCurrentBasketQuery(), {
+      wrapper,
+    });
+    const masterCustody = renderHook(() => useMasterCustodyQuery(), {
+      wrapper,
+    });
 
     await waitFor(() =>
       expect(basketHistory.result.current.isSuccess).toBeTruthy(),
@@ -68,7 +75,9 @@ describe("query hooks", () => {
     renderHook(() => usePortfolioQuery(9), { wrapper });
     renderHook(() => useProfitabilityQuery(9), { wrapper });
 
-    await waitFor(() => expect(serviceMocks.getPortfolio).toHaveBeenCalledWith(9));
+    await waitFor(() =>
+      expect(serviceMocks.getPortfolio).toHaveBeenCalledWith(9),
+    );
     await waitFor(() =>
       expect(serviceMocks.getProfitability).toHaveBeenCalledWith(9),
     );
