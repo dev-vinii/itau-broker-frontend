@@ -2,13 +2,13 @@ import { Button } from "@/components/atoms/button";
 import { Input } from "@/components/atoms/input";
 import { FeaturePageShell } from "@/features/programmed-investment/components/feature-page-shell";
 import { JsonBlock } from "@/features/programmed-investment/components/json-block";
+import { LoadingSpinner } from "@/features/programmed-investment/components/loading-spinner";
 import { useExitClientMutation } from "@/features/programmed-investment/hooks/use-exit-client-mutation";
 import { usePortfolioQuery } from "@/features/programmed-investment/hooks/use-portfolio-query";
 import { useProfitabilityQuery } from "@/features/programmed-investment/hooks/use-profitability-query";
 import { useSubscribeClientMutation } from "@/features/programmed-investment/hooks/use-subscribe-client-mutation";
 import { useUpdateMonthlyValueMutation } from "@/features/programmed-investment/hooks/use-update-monthly-value-mutation";
 import { getApiErrorMessage } from "@/features/programmed-investment/services/error";
-import { Loader2 } from "lucide-react";
 import { FormEvent, useMemo, useState } from "react";
 
 function SectionCard({
@@ -32,9 +32,7 @@ function SectionCard({
             {tag}
           </span>
         )}
-        <h2 className="font-display text-base font-bold text-cream">
-          {title}
-        </h2>
+        <h2 className="font-display text-base font-bold text-cream">{title}</h2>
       </div>
       {children}
     </div>
@@ -47,10 +45,6 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
       {children}
     </label>
   );
-}
-
-function LoadingSpinner() {
-  return <Loader2 className="h-3.5 w-3.5 animate-spin text-gold-400" />;
 }
 
 export function ClientesPage() {

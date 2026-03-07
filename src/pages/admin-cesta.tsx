@@ -1,30 +1,22 @@
 import { Button } from "@/components/atoms/button";
 import { Input } from "@/components/atoms/input";
+import { CurrentBasketCard } from "@/features/programmed-investment/components/current-basket-card";
 import { FeaturePageShell } from "@/features/programmed-investment/components/feature-page-shell";
 import { JsonBlock } from "@/features/programmed-investment/components/json-block";
+import { LoadingSpinner } from "@/features/programmed-investment/components/loading-spinner";
 import { useBasketHistoryQuery } from "@/features/programmed-investment/hooks/use-basket-history-query";
 import { useCreateBasketMutation } from "@/features/programmed-investment/hooks/use-create-basket-mutation";
 import { useCurrentBasketQuery } from "@/features/programmed-investment/hooks/use-current-basket-query";
 import { useMasterCustodyQuery } from "@/features/programmed-investment/hooks/use-master-custody-query";
 import { getApiErrorMessage } from "@/features/programmed-investment/services/error";
-import { Loader2 } from "lucide-react";
 import { FormEvent, useState } from "react";
 
-const initialBasketItems = [
-  { ticker: "PETR4", percentual: "30" },
-  { ticker: "VALE3", percentual: "25" },
-  { ticker: "ITUB4", percentual: "20" },
-  { ticker: "BBDC4", percentual: "15" },
-  { ticker: "WEGE3", percentual: "10" },
-];
-
-function LoadingSpinner() {
-  return <Loader2 className="h-3.5 w-3.5 animate-spin text-gold-400" />;
-}
+const createEmptyBasketItems = () =>
+  Array.from({ length: 5 }, () => ({ ticker: "", percentual: "" }));
 
 export function AdminCestaPage() {
-  const [nome, setNome] = useState("Top Five - Fevereiro 2026");
-  const [itens, setItens] = useState(initialBasketItems);
+  const [nome, setNome] = useState("");
+  const [itens, setItens] = useState(createEmptyBasketItems);
 
   const createBasketMutation = useCreateBasketMutation();
   const currentBasketQuery = useCurrentBasketQuery();
@@ -119,7 +111,11 @@ export function AdminCestaPage() {
                       type="number"
                       value={item.percentual}
                       onChange={(event) =>
-                        handleItemChange(index, "percentual", event.target.value)
+                        handleItemChange(
+                          index,
+                          "percentual",
+                          event.target.value,
+                        )
                       }
                       placeholder="%"
                       className="pr-7"
@@ -153,8 +149,13 @@ export function AdminCestaPage() {
           data={createBasketMutation.data}
         />
 
+        <CurrentBasketCard
+          data={currentBasketQuery.data}
+          isFetching={currentBasketQuery.isFetching}
+        />
+
         <JsonBlock
-          title="Cesta atual"
+          title="Cesta atual (JSON)"
           data={currentBasketQuery.data}
           extra={currentBasketQuery.isFetching ? <LoadingSpinner /> : null}
         />
