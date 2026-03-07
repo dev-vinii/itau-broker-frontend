@@ -9,6 +9,7 @@ import { useCreateBasketMutation } from "@/features/programmed-investment/hooks/
 import { useCurrentBasketQuery } from "@/features/programmed-investment/hooks/use-current-basket-query";
 import { useMasterCustodyQuery } from "@/features/programmed-investment/hooks/use-master-custody-query";
 import { getApiErrorMessage } from "@/features/programmed-investment/services/error";
+import { formatPercentageInput, parsePercentageInput } from "@/lib/input-masks";
 import { FormEvent, useState } from "react";
 
 const createEmptyBasketItems = () =>
@@ -17,6 +18,7 @@ const createEmptyBasketItems = () =>
 export function AdminCestaPage() {
   const [nome, setNome] = useState("");
   const [itens, setItens] = useState(createEmptyBasketItems);
+  const [validationError, setValidationError] = useState("");
 
   const createBasketMutation = useCreateBasketMutation();
   const currentBasketQuery = useCurrentBasketQuery();
@@ -25,13 +27,44 @@ export function AdminCestaPage() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setValidationError("");
+
+    const parsedItems = itens
+      .map((item) => ({
+        ticker: item.ticker.trim().toUpperCase(),
+        percentual: parsePercentageInput(item.percentual),
+      }))
+      .filter((item) => item.ticker || item.percentual !== null);
+
+    if (!nome.trim()) {
+      setValidationError("Informe o nome da cesta.");
+      return;
+    }
+
+    if (parsedItems.length === 0) {
+      setValidationError("Informe ao menos um ativo na composicao.");
+      return;
+    }
+
+    if (parsedItems.some((item) => !item.ticker || item.percentual === null)) {
+      setValidationError("Preencha ticker e percentual para todos os itens informados.");
+      return;
+    }
+
+    const normalizedItems = parsedItems.map((item) => ({
+      ticker: item.ticker,
+      percentual: item.percentual as number,
+    }));
+
+    const total = normalizedItems.reduce((sum, item) => sum + item.percentual, 0);
+    if (Math.abs(total - 100) > 0.001) {
+      setValidationError("A soma dos percentuais deve ser 100%.");
+      return;
+    }
 
     createBasketMutation.mutate({
-      nome,
-      itens: itens.map((item) => ({
-        ticker: item.ticker,
-        percentual: Number(item.percentual),
-      })),
+      nome: nome.trim(),
+      itens: normalizedItems,
     });
   };
 
@@ -48,7 +81,7 @@ export function AdminCestaPage() {
   };
 
   const totalPercent = itens.reduce(
-    (sum, item) => sum + Number(item.percentual || 0),
+    (sum, item) => sum + (parsePercentageInput(item.percentual) ?? 0),
     0,
   );
 
@@ -92,7 +125,7 @@ export function AdminCestaPage() {
             <div className="grid gap-2">
               {itens.map((item, index) => (
                 <div
-                  key={`${index}-${item.ticker}`}
+                  key={index}
                   className={`animate-fade-up stagger-${index + 1} grid grid-cols-[1fr_100px] items-center gap-2`}
                 >
                   <Input
@@ -108,13 +141,14 @@ export function AdminCestaPage() {
                   />
                   <div className="relative">
                     <Input
-                      type="number"
+                      type="text"
+                      inputMode="decimal"
                       value={item.percentual}
                       onChange={(event) =>
                         handleItemChange(
                           index,
                           "percentual",
-                          event.target.value,
+                          formatPercentageInput(event.target.value),
                         )
                       }
                       placeholder="%"
@@ -137,6 +171,11 @@ export function AdminCestaPage() {
         {createBasketMutation.isError && (
           <p className="mt-3 font-mono text-xs text-danger">
             {getApiErrorMessage(createBasketMutation.error)}
+          </p>
+        )}
+        {validationError && (
+          <p className="mt-3 font-mono text-xs text-danger">
+            {validationError}
           </p>
         )}
       </section>

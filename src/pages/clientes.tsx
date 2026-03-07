@@ -9,6 +9,7 @@ import { useProfitabilityQuery } from "@/features/programmed-investment/hooks/us
 import { useSubscribeClientMutation } from "@/features/programmed-investment/hooks/use-subscribe-client-mutation";
 import { useUpdateMonthlyValueMutation } from "@/features/programmed-investment/hooks/use-update-monthly-value-mutation";
 import { getApiErrorMessage } from "@/features/programmed-investment/services/error";
+import { formatIntegerAmountInput, onlyDigits, parseIntegerAmountInput } from "@/lib/input-masks";
 import { FormEvent, useMemo, useState } from "react";
 
 function SectionCard({
@@ -51,16 +52,24 @@ export function ClientesPage() {
   const [nome, setNome] = useState("Joao da Silva");
   const [cpf, setCpf] = useState("12345678901");
   const [email, setEmail] = useState("joao.silva@email.com");
-  const [valorMensal, setValorMensal] = useState("3000");
+  const [valorMensal, setValorMensal] = useState(
+    formatIntegerAmountInput("3000"),
+  );
 
   const [clienteIdSaida, setClienteIdSaida] = useState("1");
   const [clienteIdValor, setClienteIdValor] = useState("1");
-  const [novoValorMensal, setNovoValorMensal] = useState("6000");
+  const [novoValorMensal, setNovoValorMensal] = useState(
+    formatIntegerAmountInput("6000"),
+  );
 
   const [clienteConsulta, setClienteConsulta] = useState("1");
   const [clienteIdSelecionado, setClienteIdSelecionado] = useState<
     number | null
   >(1);
+  const [subscribeValidationError, setSubscribeValidationError] = useState("");
+  const [exitValidationError, setExitValidationError] = useState("");
+  const [updateValidationError, setUpdateValidationError] = useState("");
+  const [consultValidationError, setConsultValidationError] = useState("");
 
   const subscribeMutation = useSubscribeClientMutation();
   const exitMutation = useExitClientMutation();
@@ -76,32 +85,68 @@ export function ClientesPage() {
 
   const handleSubscribe = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setSubscribeValidationError("");
+
+    const parsedValorMensal = parseIntegerAmountInput(valorMensal);
+    if (!parsedValorMensal || parsedValorMensal <= 0) {
+      setSubscribeValidationError("Informe um valor mensal valido maior que zero.");
+      return;
+    }
 
     subscribeMutation.mutate({
       nome,
       cpf,
       email,
-      valorMensal: Number(valorMensal),
+      valorMensal: parsedValorMensal,
     });
   };
 
   const handleExit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    exitMutation.mutate(Number(clienteIdSaida));
+    setExitValidationError("");
+
+    const parsedClienteId = Number(onlyDigits(clienteIdSaida));
+    if (!parsedClienteId || parsedClienteId <= 0) {
+      setExitValidationError("Informe um Cliente ID valido.");
+      return;
+    }
+
+    exitMutation.mutate(parsedClienteId);
   };
 
   const handleUpdateMonthlyValue = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setUpdateValidationError("");
+
+    const parsedClienteId = Number(onlyDigits(clienteIdValor));
+    const parsedNovoValor = parseIntegerAmountInput(novoValorMensal);
+
+    if (!parsedClienteId || parsedClienteId <= 0) {
+      setUpdateValidationError("Informe um Cliente ID valido.");
+      return;
+    }
+
+    if (!parsedNovoValor || parsedNovoValor <= 0) {
+      setUpdateValidationError("Informe um novo valor mensal valido.");
+      return;
+    }
 
     updateMonthlyValueMutation.mutate({
-      clienteId: Number(clienteIdValor),
-      novoValorMensal: Number(novoValorMensal),
+      clienteId: parsedClienteId,
+      novoValorMensal: parsedNovoValor,
     });
   };
 
   const handleConsult = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setClienteIdSelecionado(clientIdNumber || null);
+    setConsultValidationError("");
+
+    if (!clientIdNumber || clientIdNumber <= 0) {
+      setConsultValidationError("Informe um Cliente ID valido para consulta.");
+      return;
+    }
+
+    setClienteIdSelecionado(clientIdNumber);
   };
 
   return (
@@ -141,15 +186,23 @@ export function ClientesPage() {
             <div>
               <FieldLabel>Valor Mensal (R$)</FieldLabel>
               <Input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={valorMensal}
-                onChange={(event) => setValorMensal(event.target.value)}
+                onChange={(event) =>
+                  setValorMensal(formatIntegerAmountInput(event.target.value))
+                }
               />
             </div>
             <Button type="submit" disabled={subscribeMutation.isPending}>
               {subscribeMutation.isPending ? "Enviando..." : "Aderir"}
             </Button>
           </form>
+          {subscribeValidationError && (
+            <p className="mt-3 font-mono text-xs text-danger">
+              {subscribeValidationError}
+            </p>
+          )}
           {subscribeMutation.isError && (
             <p className="mt-3 font-mono text-xs text-danger">
               {getApiErrorMessage(subscribeMutation.error)}
@@ -166,9 +219,12 @@ export function ClientesPage() {
             <div>
               <FieldLabel>Cliente ID</FieldLabel>
               <Input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={clienteIdSaida}
-                onChange={(event) => setClienteIdSaida(event.target.value)}
+                onChange={(event) =>
+                  setClienteIdSaida(onlyDigits(event.target.value))
+                }
                 placeholder="clienteId"
               />
             </div>
@@ -176,6 +232,11 @@ export function ClientesPage() {
               {exitMutation.isPending ? "Processando..." : "Encerrar adesao"}
             </Button>
           </form>
+          {exitValidationError && (
+            <p className="mt-3 font-mono text-xs text-danger">
+              {exitValidationError}
+            </p>
+          )}
           {exitMutation.isError && (
             <p className="mt-3 font-mono text-xs text-danger">
               {getApiErrorMessage(exitMutation.error)}
@@ -195,18 +256,26 @@ export function ClientesPage() {
             <div>
               <FieldLabel>Cliente ID</FieldLabel>
               <Input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={clienteIdValor}
-                onChange={(event) => setClienteIdValor(event.target.value)}
+                onChange={(event) =>
+                  setClienteIdValor(onlyDigits(event.target.value))
+                }
                 placeholder="clienteId"
               />
             </div>
             <div>
               <FieldLabel>Novo Valor (R$)</FieldLabel>
               <Input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={novoValorMensal}
-                onChange={(event) => setNovoValorMensal(event.target.value)}
+                onChange={(event) =>
+                  setNovoValorMensal(
+                    formatIntegerAmountInput(event.target.value),
+                  )
+                }
                 placeholder="novoValorMensal"
               />
             </div>
@@ -219,6 +288,11 @@ export function ClientesPage() {
                 : "Atualizar"}
             </Button>
           </form>
+          {updateValidationError && (
+            <p className="mt-3 font-mono text-xs text-danger">
+              {updateValidationError}
+            </p>
+          )}
           {updateMonthlyValueMutation.isError && (
             <p className="mt-3 font-mono text-xs text-danger">
               {getApiErrorMessage(updateMonthlyValueMutation.error)}
@@ -238,14 +312,22 @@ export function ClientesPage() {
             <div>
               <FieldLabel>Cliente ID</FieldLabel>
               <Input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={clienteConsulta}
-                onChange={(event) => setClienteConsulta(event.target.value)}
+                onChange={(event) =>
+                  setClienteConsulta(onlyDigits(event.target.value))
+                }
                 placeholder="clienteId"
               />
             </div>
             <Button type="submit">Consultar</Button>
           </form>
+          {consultValidationError && (
+            <p className="mt-3 font-mono text-xs text-danger">
+              {consultValidationError}
+            </p>
+          )}
         </SectionCard>
       </section>
 
