@@ -1,35 +1,35 @@
 # Commit Convention
 
-Este projeto segue o padrao de commits do IuriCode:
+This project follows IuriCode's commit pattern:
 
 `:<emoji>: <tipo>: <descricao curta no imperativo>`
 
-Exemplos:
+Examples:
 
-- `:sparkles: feat: adiciona pagina de clientes`
-- `:bug: fix: corrige validacao de cpf duplicado`
-- `:recycle: refactor: separa hooks por responsabilidade`
-- `:lipstick: style: ajusta paleta de cores do itau`
-- `:wrench: chore: atualiza dependencias do projeto`
-- `:white_check_mark: test: adiciona testes de servicos`
-- `:memo: docs: documenta contratos da api`
+- `:sparkles: feat: add clients page`
+- `:bug: fix: prevent duplicated cpf validation`
+- `:recycle: refactor: split hooks by responsibility`
+- `:lipstick: style: adjust itau color palette`
+- `:wrench: chore: update project dependencies`
+- `:white_check_mark: test: add service tests`
+- `:memo: docs: document api contracts`
 
-## Tipos mais usados
+## Common types
 
-- `feat`: nova funcionalidade
-- `fix`: correcao de bug
-- `refactor`: mudanca interna sem alterar comportamento esperado
-- `style`: mudanca visual/formatacao
-- `test`: criacao/ajuste de testes
-- `docs`: documentacao
-- `chore`: tarefas de manutencao (deps, config, scripts)
-- `perf`: melhoria de performance
-- `ci`: pipeline/automacao
-- `build`: empacotamento/build/deploy
+- `feat`: new functionality
+- `fix`: bug fix
+- `refactor`: internal change without expected behavior changes
+- `style`: visual/formatting change
+- `test`: add/update tests
+- `docs`: documentation
+- `chore`: maintenance tasks (deps, config, scripts)
+- `perf`: performance improvement
+- `ci`: pipeline/automation
+- `build`: packaging/build/deploy
 
-## Regras
+## Rules
 
-- Use mensagem em portugues.
-- Use descricao curta e direta.
-- Evite commits muito grandes; prefira commits atomicos.
-- Commit deve compilar e nao quebrar lint/testes aplicaveis.
+- Use commit messages in English.
+- Keep the description short and direct.
+- Avoid very large commits; prefer atomic commits.
+- Commits must compile and not break applicable lint/tests.
