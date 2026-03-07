@@ -48,7 +48,7 @@ describe("programmedInvestmentService", () => {
 
     await programmedInvestmentService.exitClient(10);
     await programmedInvestmentService.updateMonthlyValue(10, {
-      novoValorMensal: 2000,
+      valorMensal: 2000,
     });
     await programmedInvestmentService.createBasket({
       nome: "Top",
@@ -61,7 +61,7 @@ describe("programmedInvestmentService", () => {
     expect(axiosInstance.post).toHaveBeenCalledWith("/clientes/10/saida");
     expect(axiosInstance.put).toHaveBeenCalledWith(
       "/clientes/10/valor-mensal",
-      { novoValorMensal: 2000 },
+      { valorMensal: 2000 },
     );
     expect(axiosInstance.post).toHaveBeenCalledWith("/admin/cesta", {
       nome: "Top",

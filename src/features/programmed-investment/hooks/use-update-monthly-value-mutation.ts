@@ -9,13 +9,13 @@ export function useUpdateMonthlyValueMutation() {
   return useMutation({
     mutationFn: ({
       clienteId,
-      novoValorMensal,
+      valorMensal,
     }: {
       clienteId: number;
-      novoValorMensal: number;
+      valorMensal: number;
     }) =>
       programmedInvestmentService.updateMonthlyValue(clienteId, {
-        novoValorMensal,
+        valorMensal,
       }),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({

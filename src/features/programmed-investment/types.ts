@@ -40,15 +40,7 @@ export type ClientExitResponse = {
 };
 
 export type UpdateMonthlyValueRequest = {
-  novoValorMensal: number;
-};
-
-export type UpdateMonthlyValueResponse = {
-  clienteId: number;
-  valorMensalAnterior: number;
-  valorMensalNovo: number;
-  dataAlteracao: string;
-  mensagem: string;
+  valorMensal: number;
 };
 
 export type PortfolioAsset = {

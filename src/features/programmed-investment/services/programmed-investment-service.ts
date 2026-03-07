@@ -11,7 +11,6 @@ import {
   ExecutePurchaseResponse,
   ProfitabilityResponse,
   UpdateMonthlyValueRequest,
-  UpdateMonthlyValueResponse,
 } from "../types";
 
 const programmedInvestmentService = {
@@ -34,11 +33,7 @@ const programmedInvestmentService = {
     clienteId: number,
     payload: UpdateMonthlyValueRequest,
   ) => {
-    const { data } = await axiosInstance.put<UpdateMonthlyValueResponse>(
-      `/clientes/${clienteId}/valor-mensal`,
-      payload,
-    );
-    return data;
+    await axiosInstance.put(`/clientes/${clienteId}/valor-mensal`, payload);
   },
 
   getProfitability: async (clienteId: number) => {

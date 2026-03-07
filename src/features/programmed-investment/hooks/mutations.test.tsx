@@ -106,7 +106,7 @@ describe("mutation hooks", () => {
     const { result: update } = renderHook(() => useUpdateMonthlyValueMutation(), {
       wrapper,
     });
-    update.current.mutate({ clienteId: 7, novoValorMensal: 2500 });
+    update.current.mutate({ clienteId: 7, valorMensal: 2500 });
 
     const { result: purchase } = renderHook(() => useExecutePurchaseMutation(), {
       wrapper,
@@ -115,7 +115,7 @@ describe("mutation hooks", () => {
 
     await waitFor(() =>
       expect(serviceMocks.updateMonthlyValue).toHaveBeenCalledWith(7, {
-        novoValorMensal: 2500,
+        valorMensal: 2500,
       }),
     );
     expect(serviceMocks.exitClient).toHaveBeenCalledWith(7);

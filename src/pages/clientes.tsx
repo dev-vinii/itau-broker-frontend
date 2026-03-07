@@ -57,7 +57,7 @@ export function ClientesPage() {
 
   const [clienteIdSaida, setClienteIdSaida] = useState("1");
   const [clienteIdValor, setClienteIdValor] = useState("1");
-  const [novoValorMensal, setNovoValorMensal] = useState(
+  const [valorMensalAtualizado, setValorMensalAtualizado] = useState(
     formatIntegerAmountInput("6000"),
   );
 
@@ -117,21 +117,23 @@ export function ClientesPage() {
     setUpdateValidationError("");
 
     const parsedClienteId = Number(onlyDigits(clienteIdValor));
-    const parsedNovoValor = parseIntegerAmountInput(novoValorMensal);
+    const parsedNovoValor = parseIntegerAmountInput(valorMensalAtualizado);
 
     if (!parsedClienteId || parsedClienteId <= 0) {
       setUpdateValidationError("Informe um Cliente ID valido.");
       return;
     }
 
-    if (!parsedNovoValor || parsedNovoValor <= 0) {
-      setUpdateValidationError("Informe um novo valor mensal valido.");
+    if (!parsedNovoValor || parsedNovoValor < 100) {
+      setUpdateValidationError(
+        "Informe um novo valor mensal valido (minimo R$100).",
+      );
       return;
     }
 
     updateMonthlyValueMutation.mutate({
       clienteId: parsedClienteId,
-      novoValorMensal: parsedNovoValor,
+      valorMensal: parsedNovoValor,
     });
   };
 
@@ -244,7 +246,7 @@ export function ClientesPage() {
 
         <SectionCard
           title="Alterar valor mensal"
-          tag="PATCH"
+          tag="PUT"
           className="animate-fade-up stagger-3 lg:col-span-2"
         >
           <form
@@ -268,13 +270,13 @@ export function ClientesPage() {
               <Input
                 type="text"
                 inputMode="numeric"
-                value={novoValorMensal}
+                value={valorMensalAtualizado}
                 onChange={(event) =>
-                  setNovoValorMensal(
+                  setValorMensalAtualizado(
                     formatIntegerAmountInput(event.target.value),
                   )
                 }
-                placeholder="novoValorMensal"
+                placeholder="valorMensal"
               />
             </div>
             <Button

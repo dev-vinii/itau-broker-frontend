@@ -103,7 +103,7 @@ describe("ClientesPage", () => {
     expect(exitMutateMock).toHaveBeenCalledWith(1);
     expect(updateMutateMock).toHaveBeenCalledWith({
       clienteId: 1,
-      novoValorMensal: 6000,
+      valorMensal: 6000,
     });
   });
 
