@@ -37,13 +37,6 @@ vi.mock("@/features/programmed-investment/hooks/use-basket-history-query", () =>
   }),
 }));
 
-vi.mock("@/features/programmed-investment/hooks/use-master-custody-query", () => ({
-  useMasterCustodyQuery: () => ({
-    data: undefined,
-    isFetching: queryState.isFetching,
-  }),
-}));
-
 describe("AdminCestaPage", () => {
   beforeEach(() => {
     createMutateMock.mockReset();

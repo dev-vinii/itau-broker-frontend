@@ -9,8 +9,6 @@ import {
   CurrentBasketResponse,
   ExecutePurchaseRequest,
   ExecutePurchaseResponse,
-  MasterCustodyResponse,
-  PortfolioResponse,
   ProfitabilityResponse,
   UpdateMonthlyValueRequest,
   UpdateMonthlyValueResponse,
@@ -43,13 +41,6 @@ const programmedInvestmentService = {
     return data;
   },
 
-  getPortfolio: async (clienteId: number) => {
-    const { data } = await axiosInstance.get<PortfolioResponse>(
-      `/clientes/${clienteId}/carteira`,
-    );
-    return data;
-  },
-
   getProfitability: async (clienteId: number) => {
     const { data } = await axiosInstance.get<ProfitabilityResponse>(
       `/clientes/${clienteId}/rentabilidade`,
@@ -74,13 +65,6 @@ const programmedInvestmentService = {
   getBasketHistory: async () => {
     const { data } = await axiosInstance.get<BasketHistoryResponse>(
       "/admin/cesta/historico",
-    );
-    return data;
-  },
-
-  getMasterCustody: async () => {
-    const { data } = await axiosInstance.get<MasterCustodyResponse>(
-      "/admin/conta-master/custodia",
     );
     return data;
   },

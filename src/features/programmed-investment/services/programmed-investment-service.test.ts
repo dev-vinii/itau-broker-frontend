@@ -33,17 +33,13 @@ describe("programmedInvestmentService", () => {
 
   it("calls all read endpoints", async () => {
     vi.mocked(axiosInstance.get).mockResolvedValue({ data: { ok: true } });
-    await programmedInvestmentService.getPortfolio(1);
     await programmedInvestmentService.getProfitability(1);
     await programmedInvestmentService.getCurrentBasket();
     await programmedInvestmentService.getBasketHistory();
-    await programmedInvestmentService.getMasterCustody();
 
-    expect(axiosInstance.get).toHaveBeenCalledWith("/clientes/1/carteira");
     expect(axiosInstance.get).toHaveBeenCalledWith("/clientes/1/rentabilidade");
     expect(axiosInstance.get).toHaveBeenCalledWith("/admin/cesta/atual");
     expect(axiosInstance.get).toHaveBeenCalledWith("/admin/cesta/historico");
-    expect(axiosInstance.get).toHaveBeenCalledWith("/admin/conta-master/custodia");
   });
 
   it("calls mutation endpoints", async () => {

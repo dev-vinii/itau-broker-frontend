@@ -19,9 +19,6 @@ export function useUpdateMonthlyValueMutation() {
       }),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["portfolio", variables.clienteId],
-      });
-      queryClient.invalidateQueries({
         queryKey: ["profitability", variables.clienteId],
       });
       toast.success("Valor mensal atualizado com sucesso.");

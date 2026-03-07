@@ -122,7 +122,6 @@ describe("mutation hooks", () => {
     expect(serviceMocks.executePurchase).toHaveBeenCalledWith({
       dataReferencia: "2026-03-01",
     });
-    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ["portfolio", 7] });
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ["profitability", 7] });
     expect(toast.success).toHaveBeenCalled();
   });

@@ -7,7 +7,6 @@ import { LoadingSpinner } from "@/features/programmed-investment/components/load
 import { useBasketHistoryQuery } from "@/features/programmed-investment/hooks/use-basket-history-query";
 import { useCreateBasketMutation } from "@/features/programmed-investment/hooks/use-create-basket-mutation";
 import { useCurrentBasketQuery } from "@/features/programmed-investment/hooks/use-current-basket-query";
-import { useMasterCustodyQuery } from "@/features/programmed-investment/hooks/use-master-custody-query";
 import { getApiErrorMessage } from "@/features/programmed-investment/services/error";
 import { formatPercentageInput, parsePercentageInput } from "@/lib/input-masks";
 import { FormEvent, useState } from "react";
@@ -23,7 +22,6 @@ export function AdminCestaPage() {
   const createBasketMutation = useCreateBasketMutation();
   const currentBasketQuery = useCurrentBasketQuery();
   const basketHistoryQuery = useBasketHistoryQuery();
-  const masterCustodyQuery = useMasterCustodyQuery();
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -88,7 +86,7 @@ export function AdminCestaPage() {
   return (
     <FeaturePageShell
       title="Administracao da Cesta"
-      description="Cadastro de cesta Top Five e consultas administrativas (cesta atual, historico e custodia master)."
+      description="Cadastro de cesta Top Five e consultas administrativas (cesta atual e historico)."
     >
       <section className="animate-fade-up rounded-lg border border-faint/30 bg-surface-1/60 p-6">
         <div className="mb-5 flex items-center justify-between">
@@ -203,12 +201,6 @@ export function AdminCestaPage() {
           title="Historico de cestas"
           data={basketHistoryQuery.data}
           extra={basketHistoryQuery.isFetching ? <LoadingSpinner /> : null}
-        />
-
-        <JsonBlock
-          title="Custodia da conta master"
-          data={masterCustodyQuery.data}
-          extra={masterCustodyQuery.isFetching ? <LoadingSpinner /> : null}
         />
       </section>
     </FeaturePageShell>

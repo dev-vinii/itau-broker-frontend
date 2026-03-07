@@ -56,13 +56,6 @@ vi.mock("@/features/programmed-investment/hooks/use-update-monthly-value-mutatio
   }),
 }));
 
-vi.mock("@/features/programmed-investment/hooks/use-portfolio-query", () => ({
-  usePortfolioQuery: () => ({
-    data: undefined,
-    isFetching: false,
-  }),
-}));
-
 vi.mock("@/features/programmed-investment/hooks/use-profitability-query", () => ({
   useProfitabilityQuery: () => ({
     data: undefined,

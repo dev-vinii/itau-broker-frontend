@@ -10,7 +10,6 @@ export function useExitClientMutation() {
     mutationFn: (clienteId: number) =>
       programmedInvestmentService.exitClient(clienteId),
     onSuccess: (_, clienteId) => {
-      queryClient.invalidateQueries({ queryKey: ["portfolio", clienteId] });
       queryClient.invalidateQueries({ queryKey: ["profitability", clienteId] });
       toast.success("Saida do cliente registrada com sucesso.");
     },

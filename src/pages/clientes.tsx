@@ -4,7 +4,6 @@ import { FeaturePageShell } from "@/features/programmed-investment/components/fe
 import { JsonBlock } from "@/features/programmed-investment/components/json-block";
 import { LoadingSpinner } from "@/features/programmed-investment/components/loading-spinner";
 import { useExitClientMutation } from "@/features/programmed-investment/hooks/use-exit-client-mutation";
-import { usePortfolioQuery } from "@/features/programmed-investment/hooks/use-portfolio-query";
 import { useProfitabilityQuery } from "@/features/programmed-investment/hooks/use-profitability-query";
 import { useSubscribeClientMutation } from "@/features/programmed-investment/hooks/use-subscribe-client-mutation";
 import { useUpdateMonthlyValueMutation } from "@/features/programmed-investment/hooks/use-update-monthly-value-mutation";
@@ -75,7 +74,6 @@ export function ClientesPage() {
   const exitMutation = useExitClientMutation();
   const updateMonthlyValueMutation = useUpdateMonthlyValueMutation();
 
-  const portfolioQuery = usePortfolioQuery(clienteIdSelecionado);
   const profitabilityQuery = useProfitabilityQuery(clienteIdSelecionado);
 
   const clientIdNumber = useMemo(
@@ -152,7 +150,7 @@ export function ClientesPage() {
   return (
     <FeaturePageShell
       title="Clientes"
-      description="Fluxos de adesao, saida, ajuste de aporte e consultas de custodia/rentabilidade."
+      description="Fluxos de adesao, saida, ajuste de aporte e consulta de rentabilidade."
     >
       <section className="grid gap-5 lg:grid-cols-2">
         <SectionCard
@@ -301,7 +299,7 @@ export function ClientesPage() {
         </SectionCard>
 
         <SectionCard
-          title="Consultar carteira e rentabilidade"
+          title="Consultar rentabilidade"
           tag="GET"
           className="animate-fade-up stagger-4 lg:col-span-2"
         >
@@ -350,12 +348,6 @@ export function ClientesPage() {
         <JsonBlock
           title="Resposta de alteracao de valor"
           data={updateMonthlyValueMutation.data}
-        />
-
-        <JsonBlock
-          title="Carteira do cliente"
-          data={portfolioQuery.data}
-          extra={portfolioQuery.isFetching ? <LoadingSpinner /> : null}
         />
 
         <JsonBlock

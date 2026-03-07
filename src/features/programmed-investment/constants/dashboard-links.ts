@@ -5,7 +5,7 @@ export const dashboardLinks = [
     to: "/clientes",
     title: "Clientes",
     description:
-      "Adesao, saida, alteracao de valor mensal, carteira e rentabilidade.",
+      "Adesao, saida, alteracao de valor mensal e rentabilidade.",
     icon: Users,
     tag: "OPERACOES",
   },
@@ -13,7 +13,7 @@ export const dashboardLinks = [
     to: "/admin/cesta",
     title: "Admin - Cesta",
     description:
-      "Cadastro da Top Five, consulta de cesta atual, historico e conta master.",
+      "Cadastro da Top Five, consulta de cesta atual e historico.",
     icon: Settings,
     tag: "ADMIN",
   },
