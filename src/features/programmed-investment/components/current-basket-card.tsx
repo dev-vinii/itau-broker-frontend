@@ -70,9 +70,11 @@ export function CurrentBasketCard({ data, isFetching }: CurrentBasketCardProps) 
                     style={{ width: `${Math.min(Math.max(item.percentual, 0), 100)}%` }}
                   />
                 </div>
-                <p className="mt-2 font-mono text-[11px] text-muted">
-                  Cotacao atual: {currencyFormatter.format(item.cotacaoAtual)}
-                </p>
+                {Number.isFinite(item.cotacaoAtual) && (
+                  <p className="mt-2 font-mono text-[11px] text-muted">
+                    Cotacao atual: {currencyFormatter.format(item.cotacaoAtual)}
+                  </p>
+                )}
               </div>
             ))}
           </div>
