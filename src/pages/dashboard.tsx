@@ -1,32 +1,6 @@
-import { Link } from "@tanstack/react-router";
 import { FeaturePageShell } from "@/features/programmed-investment/components/feature-page-shell";
-import { Users, Settings, Zap } from "lucide-react";
-
-const links = [
-  {
-    to: "/clientes",
-    title: "Clientes",
-    description:
-      "Adesao, saida, alteracao de valor mensal, carteira e rentabilidade.",
-    icon: Users,
-    tag: "OPERACOES",
-  },
-  {
-    to: "/admin/cesta",
-    title: "Admin - Cesta",
-    description:
-      "Cadastro da Top Five, consulta de cesta atual, historico e conta master.",
-    icon: Settings,
-    tag: "ADMIN",
-  },
-  {
-    to: "/motor",
-    title: "Motor de Compra",
-    description: "Execucao manual de compra programada para testes.",
-    icon: Zap,
-    tag: "ENGINE",
-  },
-] as const;
+import { dashboardLinks } from "@/features/programmed-investment/constants/dashboard-links";
+import { Link } from "@tanstack/react-router";
 
 export function DashboardPage() {
   return (
@@ -35,7 +9,7 @@ export function DashboardPage() {
       description="Frontend para consumir os endpoints de cliente, administracao e motor de compra da Itau Corretora."
     >
       <section className="grid gap-5 md:grid-cols-3">
-        {links.map((item, index) => (
+        {dashboardLinks.map((item, index) => (
           <Link
             key={item.to}
             to={item.to}

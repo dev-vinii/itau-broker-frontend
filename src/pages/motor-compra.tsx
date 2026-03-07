@@ -46,9 +46,7 @@ export function MotorCompraPage() {
             />
           </div>
           <Button type="submit" disabled={executePurchaseMutation.isPending}>
-            {executePurchaseMutation.isPending
-              ? "Executando..."
-              : "Executar"}
+            {executePurchaseMutation.isPending ? "Executando..." : "Executar"}
           </Button>
         </form>
 
