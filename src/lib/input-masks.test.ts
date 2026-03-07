@@ -1,4 +1,5 @@
 import {
+  formatCpfInput,
   formatIntegerAmountInput,
   formatPercentageInput,
   onlyDigits,
@@ -22,6 +23,12 @@ describe("input-masks", () => {
     expect(parseIntegerAmountInput("1.234")).toBe(1234);
     expect(parseIntegerAmountInput("R$ 50.000")).toBe(50000);
     expect(parseIntegerAmountInput("")).toBeNull();
+  });
+
+  it("formats CPF input", () => {
+    expect(formatCpfInput("12345678901")).toBe("123.456.789-01");
+    expect(formatCpfInput("123456")).toBe("123.456");
+    expect(formatCpfInput("abc123")).toBe("123");
   });
 
   it("formats percentage with comma decimal", () => {

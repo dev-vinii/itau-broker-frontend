@@ -8,7 +8,12 @@ import { useProfitabilityQuery } from "@/features/programmed-investment/hooks/us
 import { useSubscribeClientMutation } from "@/features/programmed-investment/hooks/use-subscribe-client-mutation";
 import { useUpdateMonthlyValueMutation } from "@/features/programmed-investment/hooks/use-update-monthly-value-mutation";
 import { getApiErrorMessage } from "@/features/programmed-investment/services/error";
-import { formatIntegerAmountInput, onlyDigits, parseIntegerAmountInput } from "@/lib/input-masks";
+import {
+  formatCpfInput,
+  formatIntegerAmountInput,
+  onlyDigits,
+  parseIntegerAmountInput,
+} from "@/lib/input-masks";
 import { FormEvent, useMemo, useState } from "react";
 
 function SectionCard({
@@ -49,7 +54,7 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
 
 export function ClientesPage() {
   const [nome, setNome] = useState("Joao da Silva");
-  const [cpf, setCpf] = useState("12345678901");
+  const [cpf, setCpf] = useState(formatCpfInput("12345678901"));
   const [email, setEmail] = useState("joao.silva@email.com");
   const [valorMensal, setValorMensal] = useState(
     formatIntegerAmountInput("3000"),
@@ -93,7 +98,7 @@ export function ClientesPage() {
 
     subscribeMutation.mutate({
       nome,
-      cpf,
+      cpf: onlyDigits(cpf),
       email,
       valorMensal: parsedValorMensal,
     });
@@ -172,7 +177,9 @@ export function ClientesPage() {
               <FieldLabel>CPF</FieldLabel>
               <Input
                 value={cpf}
-                onChange={(event) => setCpf(event.target.value)}
+                onChange={(event) => setCpf(formatCpfInput(event.target.value))}
+                inputMode="numeric"
+                maxLength={14}
               />
             </div>
             <div>

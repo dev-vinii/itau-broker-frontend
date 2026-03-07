@@ -125,6 +125,15 @@ describe("ClientesPage", () => {
     ).toBeInTheDocument();
   });
 
+  it("applies CPF mask in input field", () => {
+    render(<ClientesPage />);
+    const cpfInput = screen.getByDisplayValue("123.456.789-01");
+
+    fireEvent.change(cpfInput, { target: { value: "98765432100" } });
+
+    expect(screen.getByDisplayValue("987.654.321-00")).toBeInTheDocument();
+  });
+
   it("renders pending and api error states", () => {
     subscribeState.isPending = true;
     subscribeState.isError = true;
