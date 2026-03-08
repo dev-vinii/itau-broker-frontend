@@ -11,17 +11,6 @@ const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   currency: "BRL",
 });
 
-const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
-  dateStyle: "short",
-  timeStyle: "short",
-});
-
-function formatDate(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return dateFormatter.format(date);
-}
-
 export function CurrentBasketCard({ data, isFetching }: CurrentBasketCardProps) {
   return (
     <article className="rounded-lg border border-faint/30 bg-surface-1/60 p-6">
@@ -46,9 +35,6 @@ export function CurrentBasketCard({ data, isFetching }: CurrentBasketCardProps) 
               <span className={data.ativa ? "text-success" : "text-danger"}>
                 {data.ativa ? "Ativa" : "Inativa"}
               </span>
-            </p>
-            <p>
-              Criacao: <span className="text-cream">{formatDate(data.dataCriacao)}</span>
             </p>
           </div>
 

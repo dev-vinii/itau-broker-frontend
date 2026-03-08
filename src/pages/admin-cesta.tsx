@@ -12,10 +12,6 @@ import { FormEvent, useState } from "react";
 const createEmptyBasketItems = () =>
   Array.from({ length: 5 }, () => ({ ticker: "", percentual: "" }));
 
-function formatDate(value: string) {
-  return new Date(value).toLocaleDateString("pt-BR");
-}
-
 export function AdminCestaPage() {
   const [nome, setNome] = useState("");
   const [itens, setItens] = useState(createEmptyBasketItems);
@@ -245,10 +241,7 @@ export function AdminCestaPage() {
                     </span>
                   </div>
                   <p className="mt-1 text-xs text-muted">
-                    Criada em {formatDate(cesta.dataCriacao)}
-                    {cesta.dataDesativacao
-                      ? `, desativada em ${formatDate(cesta.dataDesativacao)}`
-                      : ""}
+                    {cesta.ativa ? "Cesta ativa" : "Cesta encerrada"}
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {(cesta.itens ?? []).map((item) => (
