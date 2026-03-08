@@ -161,6 +161,27 @@ describe("ClientesPage", () => {
     ).toBeInTheDocument();
   });
 
+  it("renders profitability summary from flat response payload", () => {
+    useProfitabilityQueryMock.mockReturnValue({
+      data: {
+        nome: "Conta Master Corretora",
+        valorInvestidoTotal: 0,
+        valorAtualTotal: 0,
+        plTotal: 0,
+        rentabilidadePercentual: 0,
+      },
+      isFetching: false,
+      isError: false,
+      error: undefined,
+    });
+
+    render(<ClientesPage />);
+
+    expect(screen.getByText("Conta Master Corretora")).toBeInTheDocument();
+    expect(screen.getAllByText("R$ 0,00").length).toBeGreaterThan(0);
+    expect(screen.getByText("0,00%")).toBeInTheDocument();
+  });
+
   it("renders pending and api error states", () => {
     subscribeState.isPending = true;
     subscribeState.isError = true;

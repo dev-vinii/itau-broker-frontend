@@ -15,6 +15,13 @@ import {
 } from "@/lib/input-masks";
 import { FormEvent, ReactNode, useMemo, useState } from "react";
 
+type ProfitabilitySummary = {
+  valorTotalInvestido: number;
+  valorAtualCarteira: number;
+  plTotal: number;
+  rentabilidadePercentual: number;
+};
+
 function SectionCard({
   title,
   children,
@@ -115,7 +122,36 @@ export function ClientesPage() {
   const updateMonthlyValueMutation = useUpdateMonthlyValueMutation();
 
   const profitabilityQuery = useProfitabilityQuery(clienteIdSelecionado);
-  const profitabilitySummary = profitabilityQuery.data?.rentabilidade;
+  const profitabilitySummary = useMemo(() => {
+    const data = profitabilityQuery.data as
+      | {
+          rentabilidade?: ProfitabilitySummary;
+          valorInvestidoTotal?: number;
+          valorAtualTotal?: number;
+          plTotal?: number;
+          rentabilidadePercentual?: number;
+        }
+      | undefined;
+
+    if (!data) return null;
+    if (data.rentabilidade) return data.rentabilidade;
+
+    const hasFlatSummary = [
+      data.valorInvestidoTotal,
+      data.valorAtualTotal,
+      data.plTotal,
+      data.rentabilidadePercentual,
+    ].some((value) => typeof value === "number");
+
+    if (!hasFlatSummary) return null;
+
+    return {
+      valorTotalInvestido: data.valorInvestidoTotal ?? 0,
+      valorAtualCarteira: data.valorAtualTotal ?? 0,
+      plTotal: data.plTotal ?? 0,
+      rentabilidadePercentual: data.rentabilidadePercentual ?? 0,
+    };
+  }, [profitabilityQuery.data]);
 
   const clientIdNumber = useMemo(
     () => Number(clienteConsulta),
