@@ -93,6 +93,6 @@ describe("AdminCestaPage", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Salvar cesta" }));
     expect(screen.getByText("Informe o nome da cesta.")).toBeInTheDocument();
-    expect(screen.getByText("Erro na cesta")).toBeInTheDocument();
+    expect(screen.getAllByText("Erro na cesta").length).toBeGreaterThan(0);
   });
 });

@@ -2,8 +2,6 @@ import { Button } from "@/components/atoms/button";
 import { Input } from "@/components/atoms/input";
 import { CurrentBasketCard } from "@/features/programmed-investment/components/current-basket-card";
 import { FeaturePageShell } from "@/features/programmed-investment/components/feature-page-shell";
-import { JsonBlock } from "@/features/programmed-investment/components/json-block";
-import { LoadingSpinner } from "@/features/programmed-investment/components/loading-spinner";
 import { useBasketHistoryQuery } from "@/features/programmed-investment/hooks/use-basket-history-query";
 import { useCreateBasketMutation } from "@/features/programmed-investment/hooks/use-create-basket-mutation";
 import { useCurrentBasketQuery } from "@/features/programmed-investment/hooks/use-current-basket-query";
@@ -13,6 +11,10 @@ import { FormEvent, useState } from "react";
 
 const createEmptyBasketItems = () =>
   Array.from({ length: 5 }, () => ({ ticker: "", percentual: "" }));
+
+function formatDate(value: string) {
+  return new Date(value).toLocaleDateString("pt-BR");
+}
 
 export function AdminCestaPage() {
   const [nome, setNome] = useState("");
@@ -181,27 +183,103 @@ export function AdminCestaPage() {
       <div className="gold-line" />
 
       <section className="grid gap-5 lg:grid-cols-2">
-        <JsonBlock
-          title="Resposta de criacao da cesta"
-          data={createBasketMutation.data}
-        />
+        <section className="rounded-lg border border-faint/30 bg-surface-1/80 p-5">
+          <h3 className="font-display text-base font-semibold text-cream">
+            Resultado da operacao
+          </h3>
+
+          {createBasketMutation.isError ? (
+            <p className="mt-3 text-sm text-danger">
+              {getApiErrorMessage(createBasketMutation.error)}
+            </p>
+          ) : createBasketMutation.data ? (
+            <div className="mt-4 space-y-2">
+              <p className="text-sm text-muted">
+                Cesta <span className="font-semibold text-cream">{createBasketMutation.data.nome}</span>{" "}
+                salva com sucesso.
+              </p>
+              <p className="text-sm text-muted">
+                ID da cesta:{" "}
+                <span className="font-semibold text-cream">
+                  {createBasketMutation.data.cestaId}
+                </span>
+              </p>
+              <p className="text-sm text-muted">
+                Rebalanceamento:{" "}
+                <span className="font-semibold text-cream">
+                  {createBasketMutation.data.rebalanceamentoDisparado
+                    ? "Disparado"
+                    : "Nao disparado"}
+                </span>
+              </p>
+              <p className="text-sm text-muted">
+                Itens cadastrados:{" "}
+                <span className="font-semibold text-cream">
+                  {createBasketMutation.data.itens?.length ?? 0}
+                </span>
+              </p>
+            </div>
+          ) : (
+            <p className="mt-3 text-sm text-muted">
+              O resultado da criacao da cesta sera exibido aqui.
+            </p>
+          )}
+        </section>
 
         <CurrentBasketCard
           data={currentBasketQuery.data}
           isFetching={currentBasketQuery.isFetching}
         />
 
-        <JsonBlock
-          title="Cesta atual (JSON)"
-          data={currentBasketQuery.data}
-          extra={currentBasketQuery.isFetching ? <LoadingSpinner /> : null}
-        />
+        <section className="rounded-lg border border-faint/30 bg-surface-1/80 p-5 lg:col-span-2">
+          <h3 className="font-display text-base font-semibold text-cream">
+            Historico de cestas
+          </h3>
 
-        <JsonBlock
-          title="Historico de cestas"
-          data={basketHistoryQuery.data}
-          extra={basketHistoryQuery.isFetching ? <LoadingSpinner /> : null}
-        />
+          {basketHistoryQuery.isFetching ? (
+            <p className="mt-3 text-sm text-muted">Carregando historico...</p>
+          ) : basketHistoryQuery.data?.cestas?.length ? (
+            <div className="mt-4 space-y-3">
+              {basketHistoryQuery.data.cestas.map((cesta) => (
+                <article
+                  key={cesta.cestaId}
+                  className="rounded-md border border-faint/20 bg-background/20 p-4"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="font-semibold text-cream">
+                      {cesta.nome} (#{cesta.cestaId})
+                    </p>
+                    <span
+                      className={`font-mono text-[11px] uppercase ${cesta.ativa ? "text-success" : "text-muted"}`}
+                    >
+                      {cesta.ativa ? "Ativa" : "Encerrada"}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-muted">
+                    Criada em {formatDate(cesta.dataCriacao)}
+                    {cesta.dataDesativacao
+                      ? `, desativada em ${formatDate(cesta.dataDesativacao)}`
+                      : ""}
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {(cesta.itens ?? []).map((item) => (
+                      <span
+                        key={`${cesta.cestaId}-${item.ticker}`}
+                        className="rounded-sm border border-faint/25 px-2 py-1 font-mono text-[11px] text-gold-100"
+                      >
+                        {item.ticker}: {item.percentual.toFixed(2)}%
+                      </span>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-3 text-sm text-muted">
+              Nenhum historico de cestas disponivel.
+            </p>
+          )}
+        </section>
       </section>
     </FeaturePageShell>
   );

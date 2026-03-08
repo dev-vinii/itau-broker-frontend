@@ -76,12 +76,10 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 function ResultCard({
   title,
   children,
-  rawData,
   isLoading = false,
 }: {
   title: string;
   children: ReactNode;
-  rawData?: unknown;
   isLoading?: boolean;
 }) {
   return (
@@ -92,17 +90,6 @@ function ResultCard({
       </div>
 
       {children}
-
-      {rawData ? (
-        <details className="mt-4 rounded-md border border-faint/20 bg-background/20 px-3 py-2">
-          <summary className="cursor-pointer font-mono text-[11px] text-muted uppercase">
-            Ver detalhes tecnicos
-          </summary>
-          <pre className="mt-2 max-h-64 overflow-auto font-mono text-xs leading-6 text-gold-100/80">
-            {JSON.stringify(rawData, null, 2)}
-          </pre>
-        </details>
-      ) : null}
     </section>
   );
 }
@@ -396,7 +383,7 @@ export function ClientesPage() {
       <div className="gold-line" />
 
       <section className="grid gap-5 lg:grid-cols-2">
-        <ResultCard title="Status da adesao" rawData={subscribeMutation.data}>
+        <ResultCard title="Status da adesao">
           {subscribeMutation.isError ? (
             <p className="text-sm text-danger">
               {getApiErrorMessage(subscribeMutation.error)}
@@ -423,7 +410,7 @@ export function ClientesPage() {
           )}
         </ResultCard>
 
-        <ResultCard title="Status da saida" rawData={exitMutation.data}>
+        <ResultCard title="Status da saida">
           {exitMutation.isError ? (
             <p className="text-sm text-danger">{getApiErrorMessage(exitMutation.error)}</p>
           ) : exitMutation.data ? (
@@ -460,7 +447,6 @@ export function ClientesPage() {
 
         <ResultCard
           title="Rentabilidade detalhada"
-          rawData={profitabilityQuery.data}
           isLoading={profitabilityQuery.isFetching}
         >
           {profitabilityQuery.isError ? (
