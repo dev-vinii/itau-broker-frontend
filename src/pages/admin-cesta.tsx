@@ -202,14 +202,6 @@ export function AdminCestaPage() {
                 </span>
               </p>
               <p className="text-sm text-muted">
-                Rebalanceamento:{" "}
-                <span className="font-semibold text-cream">
-                  {createBasketMutation.data.rebalanceamentoDisparado
-                    ? "Disparado"
-                    : "Nao disparado"}
-                </span>
-              </p>
-              <p className="text-sm text-muted">
                 Itens cadastrados:{" "}
                 <span className="font-semibold text-cream">
                   {createBasketMutation.data.itens?.length ?? 0}
