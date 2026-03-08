@@ -36,9 +36,6 @@ export function MotorCompraPage() {
     >
       <section className="animate-fade-up rounded-lg border border-faint/30 bg-surface-1/60 p-6">
         <div className="mb-5 flex items-center gap-3">
-          <span className="rounded-sm bg-gold-400/10 px-2 py-0.5 font-mono text-[10px] tracking-wider text-gold-400 uppercase">
-            POST
-          </span>
           <h2 className="font-display text-base font-bold text-cream">
             Executar compra manual
           </h2>

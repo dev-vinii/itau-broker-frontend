@@ -17,12 +17,10 @@ import { FormEvent, ReactNode, useMemo, useState } from "react";
 
 function SectionCard({
   title,
-  tag,
   children,
   className = "",
 }: {
   title: string;
-  tag?: string;
   children: React.ReactNode;
   className?: string;
 }) {
@@ -31,11 +29,6 @@ function SectionCard({
       className={`rounded-lg border border-faint/30 bg-surface-1/60 p-6 ${className}`}
     >
       <div className="mb-5 flex items-center gap-3">
-        {tag && (
-          <span className="rounded-sm bg-gold-400/10 px-2 py-0.5 font-mono text-[10px] tracking-wider text-gold-400 uppercase">
-            {tag}
-          </span>
-        )}
         <h2 className="font-display text-base font-bold text-cream">{title}</h2>
       </div>
       {children}
@@ -204,7 +197,6 @@ export function ClientesPage() {
       <section className="grid gap-5 lg:grid-cols-2">
         <SectionCard
           title="Aderir ao produto"
-          tag="POST"
           className="animate-fade-up stagger-1"
         >
           <form className="grid gap-4" onSubmit={handleSubscribe}>
@@ -261,7 +253,6 @@ export function ClientesPage() {
 
         <SectionCard
           title="Sair do produto"
-          tag="DELETE"
           className="animate-fade-up stagger-2"
         >
           <form className="grid gap-4" onSubmit={handleExit}>
@@ -295,7 +286,6 @@ export function ClientesPage() {
 
         <SectionCard
           title="Alterar valor mensal"
-          tag="PUT"
           className="animate-fade-up stagger-3 lg:col-span-2"
         >
           <form
@@ -351,7 +341,6 @@ export function ClientesPage() {
 
         <SectionCard
           title="Consultar rentabilidade"
-          tag="GET"
           className="animate-fade-up stagger-4 lg:col-span-2"
         >
           <form
@@ -396,7 +385,10 @@ export function ClientesPage() {
               />
               <InfoRow
                 label="Conta grafica"
-                value={subscribeMutation.data.contaGrafica.numeroConta}
+                value={
+                  subscribeMutation.data.contaGrafica?.numeroConta ??
+                  "Conta em processamento"
+                }
               />
               <InfoRow
                 label="Aporte mensal"
