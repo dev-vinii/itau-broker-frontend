@@ -66,10 +66,10 @@ export function ClientesPage() {
     formatIntegerAmountInput("6000"),
   );
 
-  const [clienteConsulta, setClienteConsulta] = useState("1");
+  const [clienteConsulta, setClienteConsulta] = useState("");
   const [clienteIdSelecionado, setClienteIdSelecionado] = useState<
     number | null
-  >(1);
+  >(null);
   const [subscribeValidationError, setSubscribeValidationError] = useState("");
   const [exitValidationError, setExitValidationError] = useState("");
   const [updateValidationError, setUpdateValidationError] = useState("");

@@ -2,6 +2,10 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ClientesPage } from "./clientes";
 
+const { useProfitabilityQueryMock } = vi.hoisted(() => ({
+  useProfitabilityQueryMock: vi.fn(),
+}));
+
 const subscribeMutateMock = vi.fn();
 const exitMutateMock = vi.fn();
 const updateMutateMock = vi.fn();
@@ -57,10 +61,7 @@ vi.mock("@/features/programmed-investment/hooks/use-update-monthly-value-mutatio
 }));
 
 vi.mock("@/features/programmed-investment/hooks/use-profitability-query", () => ({
-  useProfitabilityQuery: () => ({
-    data: undefined,
-    isFetching: false,
-  }),
+  useProfitabilityQuery: useProfitabilityQueryMock,
 }));
 
 describe("ClientesPage", () => {
@@ -81,6 +82,17 @@ describe("ClientesPage", () => {
     updateState.isError = false;
     updateState.data = undefined;
     updateState.error = undefined;
+    useProfitabilityQueryMock.mockReset();
+    useProfitabilityQueryMock.mockReturnValue({
+      data: undefined,
+      isFetching: false,
+    });
+  });
+
+  it("does not fetch profitability on initial load", () => {
+    render(<ClientesPage />);
+
+    expect(useProfitabilityQueryMock).toHaveBeenCalledWith(null);
   });
 
   it("submits subscribe payload with parsed monthly value", () => {
