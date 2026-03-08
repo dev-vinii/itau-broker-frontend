@@ -115,6 +115,7 @@ export function ClientesPage() {
   const updateMonthlyValueMutation = useUpdateMonthlyValueMutation();
 
   const profitabilityQuery = useProfitabilityQuery(clienteIdSelecionado);
+  const profitabilitySummary = profitabilityQuery.data?.rentabilidade;
 
   const clientIdNumber = useMemo(
     () => Number(clienteConsulta),
@@ -445,32 +446,30 @@ export function ClientesPage() {
             <p className="text-sm text-danger">
               {getApiErrorMessage(profitabilityQuery.error)}
             </p>
-          ) : profitabilityQuery.data ? (
+          ) : profitabilityQuery.data && profitabilitySummary ? (
             <div className="space-y-1">
               <InfoRow label="Cliente" value={profitabilityQuery.data.nome} />
               <InfoRow
                 label="Total investido"
-                value={formatCurrency(
-                  profitabilityQuery.data.rentabilidade.valorTotalInvestido,
-                )}
+                value={formatCurrency(profitabilitySummary.valorTotalInvestido)}
               />
               <InfoRow
                 label="Valor da carteira"
-                value={formatCurrency(
-                  profitabilityQuery.data.rentabilidade.valorAtualCarteira,
-                )}
+                value={formatCurrency(profitabilitySummary.valorAtualCarteira)}
               />
               <InfoRow
                 label="P/L total"
-                value={formatCurrency(profitabilityQuery.data.rentabilidade.plTotal)}
+                value={formatCurrency(profitabilitySummary.plTotal)}
               />
               <InfoRow
                 label="Rentabilidade"
-                value={formatPercent(
-                  profitabilityQuery.data.rentabilidade.rentabilidadePercentual,
-                )}
+                value={formatPercent(profitabilitySummary.rentabilidadePercentual)}
               />
             </div>
+          ) : profitabilityQuery.data ? (
+            <p className="text-sm text-muted">
+              Rentabilidade indisponivel para este cliente no momento.
+            </p>
           ) : (
             <p className="text-sm text-muted">
               Consulte um cliente para visualizar a evolucao de rentabilidade.

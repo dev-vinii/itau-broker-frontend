@@ -146,6 +146,21 @@ describe("ClientesPage", () => {
     expect(screen.getByDisplayValue("987.654.321-00")).toBeInTheDocument();
   });
 
+  it("handles profitability response without summary data", () => {
+    useProfitabilityQueryMock.mockReturnValue({
+      data: { nome: "Cliente sem resumo" },
+      isFetching: false,
+      isError: false,
+      error: undefined,
+    });
+
+    render(<ClientesPage />);
+
+    expect(
+      screen.getByText("Rentabilidade indisponivel para este cliente no momento."),
+    ).toBeInTheDocument();
+  });
+
   it("renders pending and api error states", () => {
     subscribeState.isPending = true;
     subscribeState.isError = true;
