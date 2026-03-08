@@ -49,6 +49,31 @@ describe("query hooks", () => {
     );
   });
 
+  it("refetches basket history on mount and normalizes empty payload", async () => {
+    serviceMocks.getBasketHistory
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce({ cestas: [] });
+
+    const queryClient = new QueryClient();
+    const wrapper = createWrapper(queryClient);
+
+    const firstMount = renderHook(() => useBasketHistoryQuery(), {
+      wrapper,
+    });
+
+    await waitFor(() =>
+      expect(firstMount.result.current.data?.cestas).toEqual([]),
+    );
+
+    firstMount.unmount();
+
+    renderHook(() => useBasketHistoryQuery(), { wrapper });
+
+    await waitFor(() =>
+      expect(serviceMocks.getBasketHistory).toHaveBeenCalledTimes(2),
+    );
+  });
+
   it("respects enabled flag for profitability query", async () => {
     serviceMocks.getProfitability.mockResolvedValue({ rentabilidade: {} });
 
