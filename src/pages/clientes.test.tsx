@@ -174,8 +174,8 @@ describe("ClientesPage", () => {
     expect(
       screen.getByRole("button", { name: "Atualizando..." }),
     ).toBeDisabled();
-    expect(screen.getByText("Erro adesao")).toBeInTheDocument();
-    expect(screen.getByText("Erro saida")).toBeInTheDocument();
-    expect(screen.getByText("Erro update")).toBeInTheDocument();
+    expect(screen.getAllByText("Erro adesao").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Erro saida").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Erro update").length).toBeGreaterThan(0);
   });
 });

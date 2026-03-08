@@ -1,7 +1,6 @@
 import { Button } from "@/components/atoms/button";
 import { Input } from "@/components/atoms/input";
 import { FeaturePageShell } from "@/features/programmed-investment/components/feature-page-shell";
-import { JsonBlock } from "@/features/programmed-investment/components/json-block";
 import { LoadingSpinner } from "@/features/programmed-investment/components/loading-spinner";
 import { useExitClientMutation } from "@/features/programmed-investment/hooks/use-exit-client-mutation";
 import { useProfitabilityQuery } from "@/features/programmed-investment/hooks/use-profitability-query";
@@ -14,7 +13,7 @@ import {
   onlyDigits,
   parseIntegerAmountInput,
 } from "@/lib/input-masks";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, ReactNode, useMemo, useState } from "react";
 
 function SectionCard({
   title,
@@ -49,6 +48,62 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
     <label className="mb-1 block font-mono text-[10px] tracking-wider text-muted uppercase">
       {children}
     </label>
+  );
+}
+
+function formatCurrency(value: number) {
+  return value.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+}
+
+function formatPercent(value: number) {
+  return `${value.toFixed(2).replace(".", ",")}%`;
+}
+
+function InfoRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between gap-4 border-b border-faint/15 py-2 last:border-b-0">
+      <span className="font-mono text-[11px] tracking-wide text-muted uppercase">
+        {label}
+      </span>
+      <span className="text-sm font-medium text-cream">{value}</span>
+    </div>
+  );
+}
+
+function ResultCard({
+  title,
+  children,
+  rawData,
+  isLoading = false,
+}: {
+  title: string;
+  children: ReactNode;
+  rawData?: unknown;
+  isLoading?: boolean;
+}) {
+  return (
+    <section className="rounded-lg border border-faint/30 bg-surface-1/80 p-5">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h3 className="font-display text-base font-semibold text-cream">{title}</h3>
+        {isLoading ? <LoadingSpinner /> : null}
+      </div>
+
+      {children}
+
+      {rawData ? (
+        <details className="mt-4 rounded-md border border-faint/20 bg-background/20 px-3 py-2">
+          <summary className="cursor-pointer font-mono text-[11px] text-muted uppercase">
+            Ver detalhes tecnicos
+          </summary>
+          <pre className="mt-2 max-h-64 overflow-auto font-mono text-xs leading-6 text-gold-100/80">
+            {JSON.stringify(rawData, null, 2)}
+          </pre>
+        </details>
+      ) : null}
+    </section>
   );
 }
 
@@ -341,29 +396,109 @@ export function ClientesPage() {
       <div className="gold-line" />
 
       <section className="grid gap-5 lg:grid-cols-2">
-        <JsonBlock
-          title="Resposta de adesao"
-          data={subscribeMutation.data}
-          extra={
-            subscribeMutation.isSuccess ? (
-              <span className="font-mono text-[10px] text-success">
-                201 CREATED
-              </span>
-            ) : null
-          }
-        />
+        <ResultCard title="Status da adesao" rawData={subscribeMutation.data}>
+          {subscribeMutation.isError ? (
+            <p className="text-sm text-danger">
+              {getApiErrorMessage(subscribeMutation.error)}
+            </p>
+          ) : subscribeMutation.data ? (
+            <div className="space-y-1">
+              <InfoRow
+                label="Cliente"
+                value={`${subscribeMutation.data.nome} (#${subscribeMutation.data.clienteId})`}
+              />
+              <InfoRow
+                label="Conta grafica"
+                value={subscribeMutation.data.contaGrafica.numeroConta}
+              />
+              <InfoRow
+                label="Aporte mensal"
+                value={formatCurrency(subscribeMutation.data.valorMensal)}
+              />
+            </div>
+          ) : (
+            <p className="text-sm text-muted">
+              Complete o formulario de adesao para ver o resultado por aqui.
+            </p>
+          )}
+        </ResultCard>
 
-        <JsonBlock title="Resposta de saida" data={exitMutation.data} />
-        <JsonBlock
-          title="Resposta de alteracao de valor"
-          data={updateMonthlyValueMutation.data}
-        />
+        <ResultCard title="Status da saida" rawData={exitMutation.data}>
+          {exitMutation.isError ? (
+            <p className="text-sm text-danger">{getApiErrorMessage(exitMutation.error)}</p>
+          ) : exitMutation.data ? (
+            <div className="space-y-1">
+              <InfoRow label="Cliente" value={exitMutation.data.nome} />
+              <InfoRow
+                label="Situacao"
+                value={exitMutation.data.ativo ? "Ativo" : "Desligado"}
+              />
+              <InfoRow label="Mensagem" value={exitMutation.data.mensagem} />
+            </div>
+          ) : (
+            <p className="text-sm text-muted">
+              Ao encerrar uma adesao, o status atualizado aparece aqui.
+            </p>
+          )}
+        </ResultCard>
 
-        <JsonBlock
+        <ResultCard title="Status da alteracao de valor">
+          {updateMonthlyValueMutation.isError ? (
+            <p className="text-sm text-danger">
+              {getApiErrorMessage(updateMonthlyValueMutation.error)}
+            </p>
+          ) : updateMonthlyValueMutation.isSuccess ? (
+            <p className="text-sm text-success">
+              Valor mensal atualizado com sucesso.
+            </p>
+          ) : (
+            <p className="text-sm text-muted">
+              Depois de atualizar o aporte, a confirmacao aparece aqui.
+            </p>
+          )}
+        </ResultCard>
+
+        <ResultCard
           title="Rentabilidade detalhada"
-          data={profitabilityQuery.data}
-          extra={profitabilityQuery.isFetching ? <LoadingSpinner /> : null}
-        />
+          rawData={profitabilityQuery.data}
+          isLoading={profitabilityQuery.isFetching}
+        >
+          {profitabilityQuery.isError ? (
+            <p className="text-sm text-danger">
+              {getApiErrorMessage(profitabilityQuery.error)}
+            </p>
+          ) : profitabilityQuery.data ? (
+            <div className="space-y-1">
+              <InfoRow label="Cliente" value={profitabilityQuery.data.nome} />
+              <InfoRow
+                label="Total investido"
+                value={formatCurrency(
+                  profitabilityQuery.data.rentabilidade.valorTotalInvestido,
+                )}
+              />
+              <InfoRow
+                label="Valor da carteira"
+                value={formatCurrency(
+                  profitabilityQuery.data.rentabilidade.valorAtualCarteira,
+                )}
+              />
+              <InfoRow
+                label="P/L total"
+                value={formatCurrency(profitabilityQuery.data.rentabilidade.plTotal)}
+              />
+              <InfoRow
+                label="Rentabilidade"
+                value={formatPercent(
+                  profitabilityQuery.data.rentabilidade.rentabilidadePercentual,
+                )}
+              />
+            </div>
+          ) : (
+            <p className="text-sm text-muted">
+              Consulte um cliente para visualizar a evolucao de rentabilidade.
+            </p>
+          )}
+        </ResultCard>
       </section>
     </FeaturePageShell>
   );
